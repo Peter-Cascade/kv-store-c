@@ -1,0 +1,19 @@
+# 编译产物
+*.o
+*.obj
+*.exe
+*.out
+kv-store-c      
+
+# 备份/复制文件
+*_copy.*
+*.bak
+
+# 临时/调试笔记
+data.txt
+debug_note.txt
+note.txt
+
+# 编辑器
+.vscode/
+.idea/

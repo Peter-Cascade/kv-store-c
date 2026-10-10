@@ -1,6 +1,7 @@
 #include "kv.h"
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 unsigned kv_hash(const char* key) {
     unsigned int h = 0;
@@ -44,7 +45,7 @@ int kv_put(KVStore* store, const char* key, const char* value) {
 
     KVNode* new_node = (KVNode*)malloc(sizeof(KVNode));
     if (new_node == NULL) {
-        perror("malloc failed\n");
+        perror("malloc failed: ");
         return -1;
 
     }

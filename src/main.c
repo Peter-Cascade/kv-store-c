@@ -1,8 +1,16 @@
 #include "kv.h"
+#include "persistence.h"
 #include <stdio.h>
 
-int main(void) {
+int main(int argc, char* argv[]) {
     KVStore* store = kv_create();
+
+    // 
+    if (argc == 2 && strcmp(argv[0], "./kv_store") == 0) {
+        default_file = argv[1];
+    }
+    kv_load(store, default_file);
+    
     while (1){
         printf("kv> ");
         char buffer[32] = {0};  // ** *
@@ -11,8 +19,12 @@ int main(void) {
         char* value = NULL;
         char* other = NULL;
         char* result = fgets(buffer, 32, stdin);
+        
         if (result == NULL) {
-            perror("fget failed\n");
+            printf("\n");  
+            kv_save(store, default_file);
+            kv_destroy(store);
+            break;
         }
         
         order = strtok(buffer, " \n");
@@ -22,6 +34,10 @@ int main(void) {
 
         // exit
         if (strcmp(order, "exit") == 0 && key == NULL) {
+            int check = kv_save(store, default_file);
+            if (check < 0) {
+                perror("save failed: ");
+            }
             kv_destroy(store);
             break;
 
@@ -44,6 +60,26 @@ int main(void) {
         // put
         else if (strcmp(order, "put") == 0 && key != NULL && value != NULL && other == NULL) {
             kv_put(store, key, value);
+            continue;
+        }
+
+        else if (strcmp(order, "save") == 0 && key == NULL) {
+            int check = kv_save(store, default_file);
+            if (check < 0) {
+                perror("save failed: ");
+                kv_destroy(store);
+                break;
+            }
+            continue;
+        }
+
+        else if (strcmp(order, "load") == 0 && key == NULL) {
+            int check = kv_load(store, default_file);
+            if (check < 0) {
+                printf("kv_load failed\n");
+                kv_destroy(store);
+                break;
+            }
             continue;
         }
 
